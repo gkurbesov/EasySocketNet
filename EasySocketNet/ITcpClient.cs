@@ -6,17 +6,18 @@ namespace EasySocketNet
 {
     public interface ITcpClient : IDisposable
     {
-        event EventHandler OnConnected;
-        event EventHandler OnDisconnected;
+        event EventHandler<ClientStatusArgs> OnChangeStatus;
         event EventHandler<ReceivedArgs> OnReceived;
 
         object Tag { get; set; }
+        int DefaultReceiveBufferSize { get; set; }
+        int DefaultSendBufferSize { get; set; }
         bool NoDelay { get; set; }
         bool DualMode { get; set; }
         int ReceiveBufferSize { get; set; }
         int SendBufferSize { get; set; }
         bool ReuseAddress { get; set; }
-        bool Connected { get; }
+        ClientStatusType Status { get; }
         EndPoint RemoteEndPoint { get; }
 
 
