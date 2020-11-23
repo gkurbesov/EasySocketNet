@@ -138,7 +138,6 @@ namespace EasySocketNet
                 {
                     var result = await _socket.SendAsync(new ArraySegment<byte>(value), SocketFlags.None)
                         .ConfigureAwait(false);
-                    Debug.WriteLine($"Count to send = {result}");
                     return true;
                 }
                 catch (Exception ex)
