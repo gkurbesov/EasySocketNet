@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EasySocketNet
+namespace EasySocketNet.Data
 {
     public enum ClientStatusType
     {
