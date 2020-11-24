@@ -1,4 +1,5 @@
 ﻿using EasySocketNet.Arguments;
+using EasySocketNet.Data;
 using EasySocketNet.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,35 +16,6 @@ namespace EasySocketNet
     public class TcpClientAsync : ITcpClientAsync, IDisposable
     {
         public event EventHandler<ClientStatusArgs> OnChangeStatus;
-
-
-        #region socket options
-        public bool NoDelay
-        {
-            get => (int)_socket.GetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay) > 0;
-            set => _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, value ? 1 : 0);
-        }
-        public bool DualMode
-        {
-            get => _socket.DualMode;
-            set => _socket.DualMode = value;
-        }
-        public int ReceiveBufferSize
-        {
-            get => _socket.ReceiveBufferSize;
-            set => _socket.ReceiveBufferSize = value;
-        }
-        public int SendBufferSize
-        {
-            get => _socket.SendBufferSize;
-            set => _socket.SendBufferSize = value;
-        }
-        public bool ReuseAddress
-        {
-            get => (int)_socket.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress) != 0;
-            set => _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, value ? 1 : 0);
-        }
-        #endregion
 
         public object Tag { get; set; } = null;
         public int DefaultReceiveBufferSize { get; set; } = 4096;

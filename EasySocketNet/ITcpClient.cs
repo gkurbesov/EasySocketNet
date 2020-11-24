@@ -1,4 +1,5 @@
 ﻿using EasySocketNet.Arguments;
+using EasySocketNet.Data;
 using System;
 using System.Net;
 
@@ -7,16 +8,11 @@ namespace EasySocketNet
     public interface ITcpClient : IDisposable
     {
         event EventHandler<ClientStatusArgs> OnChangeStatus;
-        event EventHandler<ReceivedArgs> OnReceived;
+        event EventHandler<ReceivedArgs> OnReceive;
 
         object Tag { get; set; }
         int DefaultReceiveBufferSize { get; set; }
         int DefaultSendBufferSize { get; set; }
-        bool NoDelay { get; set; }
-        bool DualMode { get; set; }
-        int ReceiveBufferSize { get; set; }
-        int SendBufferSize { get; set; }
-        bool ReuseAddress { get; set; }
         ClientStatusType Status { get; }
         EndPoint RemoteEndPoint { get; }
 

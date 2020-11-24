@@ -1,4 +1,5 @@
 ﻿using EasySocketNet.Arguments;
+using EasySocketNet.Data;
 using EasySocketNet.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,37 +16,7 @@ namespace EasySocketNet
     {
 
         public event EventHandler<ClientStatusArgs> OnChangeStatus;
-        public event EventHandler<ReceivedArgs> OnReceived;
-
-
-
-        #region socket options
-        public bool NoDelay
-        {
-            get => (int)_socket.GetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay) > 0;
-            set => _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, value ? 1 : 0);
-        }
-        public bool DualMode
-        {
-            get => _socket.DualMode;
-            set => _socket.DualMode = value;
-        }
-        public int ReceiveBufferSize
-        {
-            get => _socket.ReceiveBufferSize;
-            set => _socket.ReceiveBufferSize = value;
-        }
-        public int SendBufferSize
-        {
-            get => _socket.SendBufferSize;
-            set => _socket.SendBufferSize = value;
-        }
-        public bool ReuseAddress
-        {
-            get => (int)_socket.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress) != 0;
-            set => _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, value ? 1 : 0);
-        }
-        #endregion
+        public event EventHandler<ReceivedArgs> OnReceive;
 
         public object Tag { get; set; } = null;
         public int DefaultReceiveBufferSize { get; set; } = 4096;
@@ -53,7 +24,7 @@ namespace EasySocketNet
         public ClientStatusType Status => _connectedStatus;
         public EndPoint RemoteEndPoint => _socket?.RemoteEndPoint ?? null;
 
-        private bool showFail = false;
+        private bool _showFail = false;
         private Socket _socket;
         private volatile ClientStatusType _connectedStatus = ClientStatusType.Disconnected;
         private byte[] _buffer { get; set; } = new byte[4096];
@@ -63,7 +34,7 @@ namespace EasySocketNet
         #region EventCallers
         private void CallReceive(byte[] value)
         {
-            OnReceived?.Invoke(this, new ReceivedArgs(RemoteEndPoint, value));
+            OnReceive?.Invoke(this, new ReceivedArgs(RemoteEndPoint, value));
         }
         private void CallChangeStatus()
         {
@@ -71,7 +42,7 @@ namespace EasySocketNet
         }
         #endregion
 
-        #region interface methods
+        #region implemetation
 
         public void Connect(string host, int port)
         {
@@ -102,11 +73,6 @@ namespace EasySocketNet
                     _connectedStatus = ClientStatusType.Connection;
                     CallChangeStatus();
 
-                    //IPAddress[] server_host_list = Dns.GetHostAddresses(host);
-                    //IPAddress ipAdress = Array.Find(server_host_list, o => o.AddressFamily == AddressFamily.InterNetwork);
-                    //IPEndPoint remoteEndPoint = new IPEndPoint(ipAdress, port);
-                    //_ = _socket.BeginConnect(remoteEndPoint, new AsyncCallback(ConnectCallback), null);
-
                     var result = _socket.BeginConnect(host, port, new AsyncCallback(ConnectCallback), null);
                     var success = result.AsyncWaitHandle.WaitOne(10000, true);
                     if (_socket != null && !_socket.Connected)
@@ -116,7 +82,7 @@ namespace EasySocketNet
                 }
                 catch (Exception ex)
                 {
-                    if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                    if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                     DisconnectFinalize();
                 }
             }
@@ -145,7 +111,7 @@ namespace EasySocketNet
             catch (Exception ex)
             {
                 Debug.WriteLine("Disconnect Exception");
-                if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
             }
             finally
             {
@@ -168,7 +134,7 @@ namespace EasySocketNet
                 catch (Exception ex)
                 {
                     Debug.WriteLine("Send Exception");
-                    if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                    if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                     Disconnect();
                 }
             }
@@ -213,7 +179,7 @@ namespace EasySocketNet
             catch (Exception ex)
             {
                 Debug.WriteLine("ConnectCallback Exception");
-                if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                 Disconnect();
             }
         }
@@ -250,7 +216,7 @@ namespace EasySocketNet
             catch (Exception ex)
             {
                 Debug.WriteLine("ReceiveCallback Exception");
-                if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                 DisconnectFinalize();
             }
         }
@@ -264,7 +230,7 @@ namespace EasySocketNet
             catch (Exception ex)
             {
                 Debug.WriteLine("SendCallback Exception");
-                if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                 Disconnect();
             }
         }
@@ -277,7 +243,7 @@ namespace EasySocketNet
             catch (Exception ex)
             {
                 Debug.WriteLine("DisconnectCallback Exception");
-                if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
             }
             finally
             {

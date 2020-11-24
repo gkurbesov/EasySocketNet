@@ -1,4 +1,5 @@
 ﻿using EasySocketNet.Arguments;
+using EasySocketNet.Data;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -16,11 +17,6 @@ namespace EasySocketNet
         object Tag { get; set; }
         int DefaultReceiveBufferSize { get; set; }
         int DefaultSendBufferSize { get; set; }
-        bool NoDelay { get; set; }
-        bool DualMode { get; set; }
-        int ReceiveBufferSize { get; set; }
-        int SendBufferSize { get; set; }
-        bool ReuseAddress { get; set; }
         ClientStatusType Status { get; }
         EndPoint RemoteEndPoint { get; }
 
