@@ -34,22 +34,50 @@ namespace EasySocketNet
         #region EventCallers
         private void CallClientConnect(int clientId)
         {
-            OnClientConnect?.Invoke(this, new ConnectionArgs(clientId));
+            try
+            {
+                OnClientConnect?.Invoke(this, new ConnectionArgs(clientId));
+            }
+            catch(Exception ex)
+            {
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+            }
         }
 
         private void CallClientDisconnect(int clientId)
         {
-            OnClientDisconnect?.Invoke(this, new ConnectionArgs(clientId));
+            try
+            {
+                OnClientDisconnect?.Invoke(this, new ConnectionArgs(clientId));
+            }
+            catch (Exception ex)
+            {
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+            }
         }
 
         private void CallReceive(ClientContainer client, byte[] value)
         {
-            OnReceive?.Invoke(this, new ReceivedArgs(client.ClientId, client.RemoteEndPoint, value));
+            try
+            {
+                OnReceive?.Invoke(this, new ReceivedArgs(client.ClientId, client.RemoteEndPoint, value));
+            }
+            catch (Exception ex)
+            {
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+            }
         }
 
         private void CallChangeStatus()
         {
-            OnChangeStatus?.Invoke(this, new ServerStatusArgs(_listenningStatus));
+            try
+            {
+                OnChangeStatus?.Invoke(this, new ServerStatusArgs(_listenningStatus));
+            }
+            catch (Exception ex)
+            {
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+            }
         }
         #endregion
 

@@ -34,11 +34,25 @@ namespace EasySocketNet
         #region EventCallers
         private void CallReceive(byte[] value)
         {
-            OnReceive?.Invoke(this, new ReceivedArgs(RemoteEndPoint, value));
+            try
+            {
+                OnReceive?.Invoke(this, new ReceivedArgs(RemoteEndPoint, value));
+            }
+            catch(Exception ex)
+            {
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+            }
         }
         private void CallChangeStatus()
         {
-            OnChangeStatus?.Invoke(this, new ClientStatusArgs(_connectedStatus));
+            try
+            {
+                OnChangeStatus?.Invoke(this, new ClientStatusArgs(_connectedStatus));
+            }
+            catch (Exception ex)
+            {
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+            }
         }
         #endregion
 

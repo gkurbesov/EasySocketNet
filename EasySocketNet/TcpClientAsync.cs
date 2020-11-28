@@ -23,7 +23,7 @@ namespace EasySocketNet
         public ClientStatusType Status => _connectedStatus;
         public EndPoint RemoteEndPoint => _socket?.RemoteEndPoint ?? null;
 
-        private bool showFail = false;
+        private bool _showFail = false;
         private Socket _socket;
         private volatile ClientStatusType _connectedStatus = ClientStatusType.Disconnected;
         private bool _disposedValue = false;
@@ -31,10 +31,14 @@ namespace EasySocketNet
         #region EventCallers
         private void CallChangeStatus()
         {
-            Task.Run(() =>
+            try
             {
                 OnChangeStatus?.Invoke(this, new ClientStatusArgs(_connectedStatus));
-            }).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+            }
         }
         #endregion
 
@@ -92,7 +96,7 @@ namespace EasySocketNet
                 catch (Exception ex)
                 {
                     Debug.WriteLine("ConnectAsync Exception");
-                    if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                    if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                     DisconnectFinalize();
                 }
             }
@@ -115,7 +119,7 @@ namespace EasySocketNet
                 catch (Exception ex)
                 {
                     Debug.WriteLine("SendAsync Exception");
-                    if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                    if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                     DisconnectFinalize();
                 }
             }
@@ -155,7 +159,7 @@ namespace EasySocketNet
             catch (Exception ex)
             {
                 Debug.WriteLine("ReceiveAsync Exception");
-                if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                 DisconnectFinalize();
                 return new byte[0];
             }
@@ -184,7 +188,7 @@ namespace EasySocketNet
             catch (Exception ex)
             {
                 Debug.WriteLine("DisconnectAsync Exception");
-                if (showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
             }
             finally
             {
@@ -209,7 +213,6 @@ namespace EasySocketNet
             }
         }
         #endregion
-
 
         #region dispose
         protected virtual void Dispose(bool disposing)
