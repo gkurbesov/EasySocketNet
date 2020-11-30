@@ -18,6 +18,8 @@ namespace EasySocketNet
         ServerStatusType Status { get; }
         int DefaultReceiveBufferSize { get; set; }
         int DefaultSendBufferSize { get; set; }
+        int DefaultReceiveTimeout { get; set; }
+        int DefaultSendTimeout { get; set; }
 
         void Start(int port);
         void Stop();

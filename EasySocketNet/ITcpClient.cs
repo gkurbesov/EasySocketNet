@@ -13,6 +13,8 @@ namespace EasySocketNet
         object Tag { get; set; }
         int DefaultReceiveBufferSize { get; set; }
         int DefaultSendBufferSize { get; set; }
+        int DefaultReceiveTimeout { get; set; }
+        int DefaultSendTimeout { get; set; }
         ClientStatusType Status { get; }
         EndPoint RemoteEndPoint { get; }
 

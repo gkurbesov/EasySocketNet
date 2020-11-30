@@ -21,6 +21,8 @@ namespace EasySocketNet
         public object Tag { get; set; } = null;
         public int DefaultReceiveBufferSize { get; set; } = 4096;
         public int DefaultSendBufferSize { get; set; } = 4096;
+        public int DefaultReceiveTimeout { get; set; } = 10;
+        public int DefaultSendTimeout { get; set; } = 10;
         public ClientStatusType Status => _connectedStatus;
         public EndPoint RemoteEndPoint => _socket?.RemoteEndPoint ?? null;
 
@@ -29,6 +31,7 @@ namespace EasySocketNet
         private volatile ClientStatusType _connectedStatus = ClientStatusType.Disconnected;
         private byte[] _buffer { get; set; } = new byte[4096];
         private BufferCollector _bufferCollector { get; set; } = new BufferCollector();
+
         private bool _disposedValue = false;
 
         #region EventCallers
@@ -80,6 +83,8 @@ namespace EasySocketNet
 
                     _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
                     {
+                        ReceiveTimeout = DefaultReceiveTimeout,
+                        SendTimeout = DefaultSendTimeout,
                         ReceiveBufferSize = DefaultReceiveBufferSize,
                         SendBufferSize = DefaultSendBufferSize,
                     };
