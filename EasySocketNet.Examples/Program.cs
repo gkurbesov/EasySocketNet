@@ -11,15 +11,15 @@ namespace EasySocketNet.Examples
     {
         static async Task Main(string[] args)
         {
-            //DefaultClient();
-            await AsyncClient();
+            DefaultClient();
+            //await AsyncClient();
         }
 
         public static void DefaultClient()
         {
             var client = new TcpClient();
             client.OnChangeStatus += Client_OnChangeStatus;
-            client.OnReceived += Client_OnReceived;
+            client.OnReceive += Client_OnReceived;
 
             client.Connect("localhost", 90);
             bool toExit = false;

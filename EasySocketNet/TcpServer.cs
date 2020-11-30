@@ -22,10 +22,12 @@ namespace EasySocketNet
         public ServerStatusType Status => _listenningStatus;
         public int DefaultReceiveBufferSize { get; set; } = 4096;
         public int DefaultSendBufferSize { get; set; } = 4096;
+        public int DefaultReceiveTimeout { get; set; } = 10;
+        public int DefaultSendTimeout { get; set; } = 10;
 
 
         private bool _showFail = true;
-        private Socket _soket = null;
+        private Socket _socket = null;
         private bool _disposedValue = false;
         private volatile ServerStatusType _listenningStatus = ServerStatusType.None;
         private List<ClientContainer> _clients = new List<ClientContainer>();
@@ -38,7 +40,7 @@ namespace EasySocketNet
             {
                 OnClientConnect?.Invoke(this, new ConnectionArgs(clientId));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
             }
@@ -92,14 +94,16 @@ namespace EasySocketNet
             {
                 try
                 {
-                    _soket?.Dispose();
+                    _socket?.Dispose();
                 }
                 finally
                 {
-                    _soket = null;
+                    _socket = null;
                 }
-                _soket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
                 {
+                    ReceiveTimeout = DefaultReceiveTimeout,
+                    SendTimeout = DefaultSendTimeout,
                     ReceiveBufferSize = DefaultReceiveBufferSize,
                     SendBufferSize = DefaultSendBufferSize
                 };
@@ -107,9 +111,9 @@ namespace EasySocketNet
                 try
                 {
                     IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, port);
-                    _soket.Bind(localEndPoint);
-                    _soket.Listen((int)SocketOptionName.MaxConnections);
-                    _soket.BeginAccept(new AsyncCallback(AcceptCallback), null);
+                    _socket.Bind(localEndPoint);
+                    _socket.Listen((int)SocketOptionName.MaxConnections);
+                    _socket.BeginAccept(new AsyncCallback(AcceptCallback), null);
                     _listenningStatus = ServerStatusType.Listening;
                 }
                 catch (Exception ex)
@@ -129,11 +133,11 @@ namespace EasySocketNet
         {
             if (_listenningStatus != ServerStatusType.None)
             {
-                if (_soket != null)
+                if (_socket != null)
                 {
                     try
                     {
-                        _soket.Close();
+                        _socket.Close();
                     }
                     finally
                     {
@@ -192,11 +196,11 @@ namespace EasySocketNet
             lock (syncObjectClients) _clients.Clear();
             try
             {
-                _soket?.Dispose();
+                _socket?.Dispose();
             }
             finally
             {
-                _soket = null;
+                _socket = null;
                 if (_listenningStatus != ServerStatusType.None)
                 {
                     _listenningStatus = ServerStatusType.None;
@@ -251,7 +255,9 @@ namespace EasySocketNet
                 var client = new ClientContainer();
                 try
                 {
-                    var socket = _soket.EndAccept(result);
+                    var socket = _socket.EndAccept(result);
+                    socket.ReceiveTimeout = DefaultReceiveTimeout;
+                    socket.SendTimeout = DefaultSendTimeout;
                     socket.ReceiveBufferSize = DefaultReceiveBufferSize;
                     socket.SendBufferSize = DefaultSendBufferSize;
 
@@ -276,8 +282,8 @@ namespace EasySocketNet
                 {
                     try
                     {
-                        if (_soket != null && _soket.IsBound)
-                            _soket.BeginAccept(new AsyncCallback(AcceptCallback), null);
+                        if (_socket != null && _socket.IsBound)
+                            _socket.BeginAccept(new AsyncCallback(AcceptCallback), null);
                     }
                     catch (Exception ex)
                     {
@@ -357,11 +363,21 @@ namespace EasySocketNet
             {
                 if (disposing)
                 {
-                    // TODO: освободить управляемое состояние (управляемые объекты)
+                    Tag = null;
+                    _listenningStatus = ServerStatusType.None;
                 }
 
-                // TODO: освободить неуправляемые ресурсы (неуправляемые объекты) и переопределить метод завершения
-                // TODO: установить значение NULL для больших полей
+                foreach (var client in _clients.ToArray())
+                    client.Dispose();
+                _clients.Clear();
+                try
+                {
+                    _socket?.Dispose();
+                }
+                finally
+                {
+                    _socket = null;
+                }
                 _disposedValue = true;
             }
         }
