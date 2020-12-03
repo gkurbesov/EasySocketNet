@@ -60,6 +60,10 @@ namespace EasySocketNet
                     {
                         _socket?.Dispose();
                     }
+                    catch (Exception ex)
+                    {
+                        if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                    }
                     finally
                     {
                         _socket = null;
@@ -206,6 +210,10 @@ namespace EasySocketNet
             {
                 _socket?.Dispose();
             }
+            catch (Exception ex)
+            {
+                if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+            }
             finally
             {
                 _socket = null;
@@ -232,6 +240,10 @@ namespace EasySocketNet
                 try
                 {
                     _socket?.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                 }
                 finally
                 {
