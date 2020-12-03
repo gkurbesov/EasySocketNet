@@ -248,6 +248,7 @@ namespace EasySocketNet
                 finally
                 {
                     _socket = null;
+                    OnChangeStatus = null;
                 }
 
                 _disposedValue = true;

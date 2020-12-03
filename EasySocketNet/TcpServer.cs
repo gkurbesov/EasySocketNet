@@ -393,6 +393,10 @@ namespace EasySocketNet
                 finally
                 {
                     _socket = null;
+                    OnChangeStatus = null;
+                    OnClientConnect = null;
+                    OnClientDisconnect = null;
+                    OnReceive = null;
                 }
                 _disposedValue = true;
             }

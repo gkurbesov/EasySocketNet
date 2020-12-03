@@ -295,9 +295,15 @@ namespace EasySocketNet
                 {
                     _socket?.Dispose();
                 }
+                catch (Exception ex)
+                {
+                    if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
+                }
                 finally
                 {
                     _socket = null;
+                    OnChangeStatus = null;
+                    OnReceive = null;
                 }
 
                 _disposedValue = true;
