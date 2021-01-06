@@ -8,9 +8,11 @@ using System.Text;
 
 namespace EasySocketNet.Data
 {
+    /// <summary>
+    /// Container containing objects for working with the client
+    /// </summary>
     public class ClientContainer : IClient, IDisposable
     {
-
         public int ClientId { get; private set; } = 0;
         public EndPoint RemoteEndPoint => socket?.RemoteEndPoint ?? null;
         internal Socket socket { get; set; } = null;

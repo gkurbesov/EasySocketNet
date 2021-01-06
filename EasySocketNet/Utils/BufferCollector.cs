@@ -11,10 +11,10 @@ namespace EasySocketNet.Utils
         private object locker = new object();
 
         /// <summary>
-        /// Добавить данные в буфер
+        /// Add data to buffer
         /// </summary>
-        /// <param name="value">массиф данных</param>
-        /// <param name="size">количество байт, необходимое для считывания</param>
+        /// <param name="value"></param>
+        /// <param name="size"></param>
         public void Append(byte[] value, int size)
         {
             lock(locker)
@@ -28,7 +28,7 @@ namespace EasySocketNet.Utils
             }
         }
         /// <summary>
-        /// очистить буфер данных
+        /// Clear data buffer
         /// </summary>
         public void Clear()
         {

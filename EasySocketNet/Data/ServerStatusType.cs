@@ -4,6 +4,9 @@ using System.Text;
 
 namespace EasySocketNet.Data
 {
+    /// <summary>
+    /// Server status
+    /// </summary>
     public enum ServerStatusType
     {
         None,
