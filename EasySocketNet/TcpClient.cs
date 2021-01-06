@@ -133,7 +133,6 @@ namespace EasySocketNet
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Disconnect Exception");
                 if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
             }
             finally
@@ -156,7 +155,6 @@ namespace EasySocketNet
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Send Exception");
                     if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                     Disconnect();
                 }
@@ -205,7 +203,6 @@ namespace EasySocketNet
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("ConnectCallback Exception");
                 if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                 Disconnect();
             }
@@ -230,19 +227,16 @@ namespace EasySocketNet
                     }
                     else
                     {
-                        Debug.WriteLine("ReceiveCallback: read size = " + readSize.ToString());
                         DisconnectFinalize();
                     }
                 }
                 else
                 {
-                    Debug.WriteLine("ReceiveCallback: _socket not connected");
                     DisconnectFinalize();
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("ReceiveCallback Exception");
                 if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                 DisconnectFinalize();
             }
@@ -256,7 +250,6 @@ namespace EasySocketNet
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("SendCallback Exception");
                 if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
                 Disconnect();
             }
@@ -269,7 +262,6 @@ namespace EasySocketNet
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("DisconnectCallback Exception");
                 if (_showFail) Debug.Fail(ex.Message, ex.StackTrace);
             }
             finally
